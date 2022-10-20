@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+
+        }
+        .color1 {
+            background-color: cadetblue;
+        }
+        .color2 {
+            background-color: #FF7373;
+        }
+        .color3 {
+            background-color: #4671D5;
+        }
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="app" v-cloak> <!--"v-cloak - в сочетании со стилем display: none
+                                позволяет скрывать объект до компиляции" -->
+    {{ greeting }}
+    <input @keyup.enter="greet" v-model="greeting" />
+
+    <hr />
+    <button @click.prevent.stop="toggleBox">Show Box</button> <!--"v-on позволяет подключать события к элементу @ = v-on:"-->
+    <div v-if="isVisible1" class="box color1"></div> <!--"v-if - Убирает элемент из DOM-->
+    <div v-else-if="isVisible2" class="box color2"></div> <!--"v-show - Оставляет элемент в DOM с знчением display: none (Подходит для частой смены условия)"-->
+    <!--<div v-else class="box color3"></div>С помощью v-if можно реализовывать разветвлённые условия-->
+</div>
+<script src="https://unpkg.com/vue@next"></script>
+<script>
+    let app = Vue.createApp({
+        data: function () {
+            return {
+                greeting: 'Hi people!',
+                isVisible1: false,
+                isVisible2: false,
+            }
+        },
+        methods: {
+            toggleBox: function() {
+                this.isVisible1 = !this.isVisible1;
+            },
+            greet() {
+                console.log(this.greeting);
+            }
+        }
+    })
+    app.mount('#app')
+</script>
+</body>
+</html>
+
+<!--
+data() {} - Функция, который передаёт объект
+methods: {} - Объект, который передаёт функции
+-->

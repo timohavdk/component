@@ -62,8 +62,8 @@
         template: `
             <form @submit.prevent="handleSubmit">
                 <h1>{{ title }}</h1>
-                <custom-input type="email" v-bind:label="emailLabel"/>
-                <custom-input type="password" v-bind:label="passwordLabel"/>
+                <custom-input v-model="email" v-bind:label="emailLabel"/>
+                <custom-input v-model="password" v-bind:label="passwordLabel"/> <!--':label - шорткат UPD: без v-bind: можно передовать строковое значение'-->
                 <button type="submit">Login</button>
             </form>
         `,
@@ -88,12 +88,28 @@
         template: `
             <label>
                 {{ label }}
-                <input type="text" />
+                <input type="text" v-model="inputValue"/>
             </label>
         `,
         props: [
-            'label'
-        ]
+            'label', // Свойство получаемое из родителя через v-bind
+            'modelValue' // Свойство связанное с родиетелем через v-model
+        ],
+        computed: {
+            inputValue: {
+                get() { //Подставляет значение из v-model родителя
+                    return this.modelValue
+                },
+                set(value) {
+                    this.$emit('update:modelValue', value); //Пробрасывает событие, которе могут слушать другие компоненты и передаёт параметр (первый аргумент - событие, второй - параметр)
+                }
+            }
+        }
+        // data() {
+        //     return {
+        //         inputValue: ''
+        //     }
+        // }
     })
     app.mount('#app')
 </script>
@@ -103,4 +119,5 @@
 <!--
 data() {} - Функция, который передаёт объект
 methods: {} - Объект, который передаёт функции
+computed: {} - Объект, который передаёт функуции / объекты
 -->

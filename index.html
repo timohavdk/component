@@ -12,31 +12,17 @@
         .color1 {
             background-color: cadetblue;
         }
-        .color2 {
-            background-color: #FF7373;
-        }
-        .color3 {
-            background-color: #4671D5;
-        }
         [v-cloak] {
             display: none;
-        }
-        input {
-            margin: 10px;
-            display: block;
         }
     </style>
 </head>
 <body>
 <div id="app" v-cloak> <!--"v-cloak - в сочетании со стилем display: none
                                 позволяет скрывать объект до компиляции" -->
-    <login-form />
-    <input @keyup.enter="greet" v-model="greeting" />
-
-    <hr />
     <button @click.prevent.stop="toggleBox">Show Box</button> <!--"v-on позволяет подключать события к элементу @ = v-on:"-->
-    <div v-if="isVisible1" class="box color1"></div> <!--"v-if - Убирает элемент из DOM-->
-    <div v-else-if="isVisible2" class="box color2"></div> <!--"v-show - Оставляет элемент в DOM с знчением display: none (Подходит для частой смены условия)"-->
+    <color-box v-if="isVisible" /> <!--"v-if - Убирает элемент из DOM-->
+     <!--"v-show - Оставляет элемент в DOM с знчением display: none (Подходит для частой смены условия)"-->
     <!--<div v-else class="box color3"></div>С помощью v-if можно реализовывать разветвлённые условия-->
 </div>
 <script src="https://unpkg.com/vue@next"></script>
@@ -44,88 +30,31 @@
     let app = Vue.createApp({
         data: function () {
             return {
-                greeting: 'Hi people!',
-                isVisible1: false,
-                isVisible2: false,
+                isVisible: false,
             }
         },
         methods: {
             toggleBox: function() {
-                this.isVisible1 = !this.isVisible1;
-            },
-            greet() {
-                console.log(this.greeting);
-            }
-        }
-    })
-    app.component('login-form', {
-        template: `
-            <form @submit.prevent="handleSubmit">
-                <h1>{{ title }}</h1>
-                <!--<p v-for="(str, i) in inputs" :key="str">{{ inputs[i] }}</p> 'цикл в Vue (Фабрика?)'-->
-                <custom-input
-                    v-for="(input, i) in inputs"
-                    :key="i"
-                    v-model="input.value"
-                    :label="input.label"
-                    :type="input.type"
-                />
-                 <!--':label - шорткат UPD: без v-bind: можно передовать строковое значение. Через v-bind идёт привязка к атрибуту'-->
-                <button type="submit">Login</button>
-            </form>
-        `,
-        components: ['custom-input'],
-        data() {
-            return {
-                title: 'Login Form',
-                inputs: [
-                    {
-                        label: 'Email',
-                        value: '',
-                        type: 'email'
-                    },
-                    {
-                        label: 'Password',
-                        value: '',
-                        type: 'password'
-                    }
-                ]
+                this.isVisible = !this.isVisible;
             }
         },
-        methods: {
-            handleSubmit() {
-                //e.preventDefault(); Способ перехватывать системные события (в параметрах функции обязательно указывать приходящее событие)
-                console.log(this.inputs[0].value, this.inputs[1].value);
-            }
+        updated() {
+            console.log('updated');
         }
     })
-    app.component('custom-input', {
+    app.component('color-box', {
         template: `
-            <label>
-                {{ label }}
-                <input :type="type" v-model="inputValue"/>
-            </label>
+            <div class="box color1"></div>
         `,
-        props: [
-            'label', // Свойство получаемое из родителя через v-bind
-            'type',
-            'modelValue' // Свойство связанное с родиетелем через v-model
-        ],
-        computed: {
-            inputValue: {
-                get() { //Подставляет значение из v-model родителя
-                    return this.modelValue
-                },
-                set(value) {
-                    this.$emit('update:modelValue', value); //Пробрасывает событие, которе могут слушать другие компоненты и передаёт параметр (первый аргумент - событие, второй - параметр)
-                }
-            }
+        created() {
+            console.log('created');
+        },
+        mounted() {
+            console.log('mounted');
+        },
+        unmounted() {
+            console.log('unmounted');
         }
-        // data() {
-        //     return {
-        //         inputValue: ''
-        //     }
-        // }
     })
     app.mount('#app')
 </script>

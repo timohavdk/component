@@ -62,22 +62,54 @@
         template: `
             <form @submit.prevent="handleSubmit">
                 <h1>{{ title }}</h1>
-                <input type="e-mail" />
-                <input type="password" />
-                <button type="submit">Submit</button>
+                <custom-input v-model="email" v-bind:label="emailLabel"/>
+                <custom-input v-model="password" v-bind:label="passwordLabel"/> <!--':label - шорткат UPD: без v-bind: можно передовать строковое значение'-->
+                <button type="submit">Login</button>
             </form>
         `,
+        components: ['custom-input'],
         data() {
             return {
-                title: 'Login Form'
+                title: 'Login Form',
+                email: '',
+                password: '',
+                emailLabel: 'Email',
+                passwordLabel: 'Password'
             }
         },
         methods: {
             handleSubmit() {
                 //e.preventDefault(); Способ перехватывать системные события (в параметрах функции обязательно указывать приходящее событие)
-                console.log("submitted");
+                console.log("submitted", this.email, this.password);
             }
         }
+    })
+    app.component('custom-input', {
+        template: `
+            <label>
+                {{ label }}
+                <input type="text" v-model="inputValue"/>
+            </label>
+        `,
+        props: [
+            'label', // Свойство получаемое из родителя через v-bind
+            'modelValue' // Свойство связанное с родиетелем через v-model
+        ],
+        computed: {
+            inputValue: {
+                get() { //Подставляет значение из v-model родителя
+                    return this.modelValue
+                },
+                set(value) {
+                    this.$emit('update:modelValue', value); //Пробрасывает событие, которе могут слушать другие компоненты и передаёт параметр (первый аргумент - событие, второй - параметр)
+                }
+            }
+        }
+        // data() {
+        //     return {
+        //         inputValue: ''
+        //     }
+        // }
     })
     app.mount('#app')
 </script>
@@ -87,4 +119,5 @@
 <!--
 data() {} - Функция, который передаёт объект
 methods: {} - Объект, который передаёт функции
+computed: {} - Объект, который передаёт функуции / объекты
 -->

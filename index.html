@@ -62,8 +62,15 @@
         template: `
             <form @submit.prevent="handleSubmit">
                 <h1>{{ title }}</h1>
-                <custom-input v-model="email" v-bind:label="emailLabel"/>
-                <custom-input v-model="password" v-bind:label="passwordLabel"/> <!--':label - шорткат UPD: без v-bind: можно передовать строковое значение'-->
+                <!--<p v-for="(str, i) in inputs" :key="str">{{ inputs[i] }}</p> 'цикл в Vue (Фабрика?)'-->
+                <custom-input
+                    v-for="(input, i) in inputs"
+                    :key="i"
+                    v-model="input.value"
+                    :label="input.label"
+                    :type="input.type"
+                />
+                 <!--':label - шорткат UPD: без v-bind: можно передовать строковое значение. Через v-bind идёт привязка к атрибуту'-->
                 <button type="submit">Login</button>
             </form>
         `,
@@ -71,16 +78,24 @@
         data() {
             return {
                 title: 'Login Form',
-                email: '',
-                password: '',
-                emailLabel: 'Email',
-                passwordLabel: 'Password'
+                inputs: [
+                    {
+                        label: 'Email',
+                        value: '',
+                        type: 'email'
+                    },
+                    {
+                        label: 'Password',
+                        value: '',
+                        type: 'password'
+                    }
+                ]
             }
         },
         methods: {
             handleSubmit() {
                 //e.preventDefault(); Способ перехватывать системные события (в параметрах функции обязательно указывать приходящее событие)
-                console.log("submitted", this.email, this.password);
+                console.log(this.inputs[0].value, this.inputs[1].value);
             }
         }
     })
@@ -88,11 +103,12 @@
         template: `
             <label>
                 {{ label }}
-                <input type="text" v-model="inputValue"/>
+                <input :type="type" v-model="inputValue"/>
             </label>
         `,
         props: [
             'label', // Свойство получаемое из родителя через v-bind
+            'type',
             'modelValue' // Свойство связанное с родиетелем через v-model
         ],
         computed: {
@@ -117,7 +133,7 @@
 </html>
 
 <!--
-data() {} - Функция, который передаёт объект
-methods: {} - Объект, который передаёт функции
-computed: {} - Объект, который передаёт функуции / объекты
+data() {} - Функция, который передаёт объект (Данные объекта)
+methods: {} - Объект, который передаёт функции (Функции объекта)
+computed: {} - Объект, который передаёт функуции / объекты (Вычисляемые свойства)
 -->

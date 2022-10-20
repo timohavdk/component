@@ -1,0 +1,2 @@
+# component
+Test Vue component
